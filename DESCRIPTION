@@ -8,6 +8,8 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
+URL: https://jkunst.com/celavi/, https://github.com/jbkunst/celavi
+BugReports: https://github.com/jbkunst/celavi/issues
 Imports: 
     assertthat,
     cli,
