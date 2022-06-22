@@ -121,6 +121,21 @@ that I use <em>really</em> often <code>vip::vi_permute</code> and <code>DALEX::m
 
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">vi</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%"></p>
+<p>And compare with other model.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">rf</span> <span class="op">&lt;-</span> <span class="fu">randomForest</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/randomForest/man/randomForest.html" class="external-link">randomForest</a></span><span class="op">(</span><span class="va">mpg</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">mtcars</span><span class="op">)</span>
+
+<span class="va">vi_rf</span> <span class="op">&lt;-</span> <span class="fu">celavi</span><span class="fu">::</span><span class="fu"><a href="reference/variable_importance.html">variable_importance</a></span><span class="op">(</span><span class="va">rf</span>, data <span class="op">=</span> <span class="va">mtcars</span>, iterations <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
+<span class="co">#&gt; ℹ Using all variables in data.</span>
+<span class="co">#&gt; ℹ Trying extract response name using `formula`.</span>
+<span class="co">#&gt; ℹ Using `mpg` as response.</span>
+<span class="co">#&gt; ℹ Using root mean square error as metric.</span>
+<span class="co">#&gt; ℹ Using `base::identity` as sampler.</span>
+<span class="co">#&gt; ℹ Using `predict.randomForest` as predict_function.</span>
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">vi</span>, <span class="va">vi_rf</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<p>From the previous chart we can tell the random Forest have small (better) RMSE and is less affected in terms of predictability by removing variables, wt variable for example.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
