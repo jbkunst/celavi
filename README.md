@@ -8,12 +8,12 @@
 [![R-CMD-check](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal (to me) of celavi is to join the main feature of two functions
-two that I use *really* often `vip::vi_permute` and
-`DALEX::model_parts`. Both functions do the *same* task but they have
-differents features and approachs.
+The goal of celavi is to join the main features of two functions  
+that I use *really* often `vip::vi_permute` and `DALEX::model_parts`.
+Both functions do the *same* task of calculate *drop out loss via
+permutation*, but they have different features and approach.
 
-In the case of `vip::vi_permute` is more direct to use, have an
+In the case of `vip::vi_permute` is more direct to use (imho), have an
 implementation for parallel processing, can be used with a `sample_frac`
 parameter. Otherwise, in the case of `DALEX::model_parts` I like the
 user can give custom `metric`s as a loss functions, the *base line* and
@@ -23,8 +23,8 @@ To that features I added some features to my *personal* taste.
 
 -   Add progress bars to the sequential and parallel process using
     `progress::progress_bar` and `progressr::progress`
--   Give the possibility of to the user to acces to the *raw* data.
--   Give verbose information using `cli::cli_alert_info`.
+-   Give the possibility of to the user to access to the *raw* data.
+-   Verbose information using `cli::cli_alert_info`.
 
 ## References
 
@@ -47,8 +47,6 @@ devtools::install_github("jbkunst/celavi")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ``` r
 library(celavi)
 
@@ -64,8 +62,16 @@ vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 10)
 #> ℹ Using `base::identity` as sampler.
 #> ℹ Using `predict.lm` as predict_function.
 
-dim(vi)
-#> [1] 120   3
+dplyr::glimpse(vi)
+#> Rows: 120
+#> Columns: 3
+#> $ variable  <chr> "am", "am", "am", "am", "am", "am", "am", "am", "am", "am", …
+#> $ iteration <int> 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10…
+#> $ value     <dbl> 2.718690, 2.813226, 2.629602, 3.006321, 2.810651, 2.780096, …
+
+nrow(vi)
+#> [1] 120
+# nrow(vi) = (ncol(mtcars) - 1 + 2) * iterations
 
 plot(vi)
 ```

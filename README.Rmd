@@ -21,19 +21,20 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal (to me) of celavi is to join the main feature of two functions two 
+The goal of celavi is to join the main features of two functions  
 that I use _really_ often `vip::vi_permute` and `DALEX::model_parts`. Both functions
-do the _same_ task but they have differents features and approachs.
+do the _same_ task of calculate _drop out loss via permutation_, 
+but they have different features and approach.
 
-In the case of `vip::vi_permute` is more direct to use, have an implementation for
+In the case of `vip::vi_permute` is more direct to use (imho), have an implementation for
 parallel processing, can be used with a `sample_frac` parameter. Otherwise, in the case of `DALEX::model_parts` I like the user can give custom `metric`s as a loss functions,
 the _base line_ and _full model_ references values, and the plots. 
 
 To that features I added some features to my _personal_ taste.
 
 - Add progress bars to the sequential and parallel process using `progress::progress_bar` and `progressr::progress`
-- Give the possibility of to the user to acces to the _raw_ data.
-- Give verbose information using `cli::cli_alert_info`.
+- Give the possibility of to the user to access to the _raw_ data.
+- Verbose information using `cli::cli_alert_info`.
 
 ## References
 
@@ -54,8 +55,6 @@ devtools::install_github("jbkunst/celavi")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
-
 ```{r example}
 library(celavi)
 
@@ -65,7 +64,10 @@ set.seed(123)
 
 vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 10)
 
-dim(vi)
+dplyr::glimpse(vi)
+
+nrow(vi)
+# nrow(vi) = (ncol(mtcars) - 1 + 2) * iterations
 
 plot(vi)
 ```
