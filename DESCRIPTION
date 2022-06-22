@@ -1,0 +1,24 @@
+Package: celavi
+Title: A very opinated permuted based feature importance implementation
+Description: A very opinated permuted based feature importance implementation 
+    inspider by vip and DALEX packages.
+Version: 0.0.0.9000
+Authors@R: person("Joshua", "Kunst", role = c("aut", "cre"), email = "jbkunst@gmail.com")
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.0
+Imports: 
+    assertthat,
+    cli,
+    dplyr,
+    forcats,
+    furrr,
+    future,
+    ggplot2,
+    progress,
+    progressr,
+    purrr,
+    rlang,
+    stringr,
+    tidyr

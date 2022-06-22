@@ -1,0 +1,8 @@
+^celavi\.Rproj$
+^\.Rproj\.user$
+^LICENSE\.md$
+^\.github$
+^CODE_OF_CONDUCT\.md$
+^README\.Rmd$
+^docs$
+_pkgdown.yml
