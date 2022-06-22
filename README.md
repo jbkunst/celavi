@@ -54,6 +54,8 @@ library(celavi)
 
 lm_model <- lm(mpg ~ ., data = mtcars)
 
+set.seed(123)
+
 vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 10)
 #> ℹ Using all variables in data.
 #> ℹ Trying extract response name using `formula`.
