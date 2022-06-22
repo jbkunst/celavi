@@ -71,3 +71,17 @@ nrow(vi)
 
 plot(vi)
 ```
+
+And compare with other model.
+
+```{r}
+rf <- randomForest::randomForest(mpg ~ ., data = mtcars)
+
+vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 10)
+
+plot(vi, vi_rf)
+```
+
+From the previous chart we can tell the random Forest have small (better) RMSE
+and is less affected in terms of predictability by removing variables, wt variable
+for example.

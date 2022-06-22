@@ -77,3 +77,25 @@ plot(vi)
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
+
+And compare with other model.
+
+``` r
+rf <- randomForest::randomForest(mpg ~ ., data = mtcars)
+
+vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 10)
+#> ℹ Using all variables in data.
+#> ℹ Trying extract response name using `formula`.
+#> ℹ Using `mpg` as response.
+#> ℹ Using root mean square error as metric.
+#> ℹ Using `base::identity` as sampler.
+#> ℹ Using `predict.randomForest` as predict_function.
+
+plot(vi, vi_rf)
+```
+
+<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
+
+From the previous chart we can tell the random Forest have small
+(better) RMSE and is less affected in terms of predictability by
+removing variables, wt variable for example.

@@ -25,5 +25,7 @@ Imports:
     stringr,
     tidyr
 Suggests: 
+    randomForest,
+    ranger,
     spelling
 Language: en-US
