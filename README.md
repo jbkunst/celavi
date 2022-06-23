@@ -60,7 +60,7 @@ vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 10)
 #> ℹ Using `mpg` as response.
 #> ℹ Using root mean square error as metric.
 #> ℹ Using `base::identity` as sampler.
-#> ℹ Using `predict.lm` as predict_function.
+#> ℹ Using `predict.lm` as predict function.
 
 dplyr::glimpse(vi)
 #> Rows: 120
@@ -89,7 +89,7 @@ vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 10)
 #> ℹ Using `mpg` as response.
 #> ℹ Using root mean square error as metric.
 #> ℹ Using `base::identity` as sampler.
-#> ℹ Using `predict.randomForest` as predict_function.
+#> ℹ Using `predict.randomForest` as predict function.
 
 plot(vi, vi_rf)
 ```
