@@ -60,7 +60,6 @@ variable_importance <- function(object,
   # variables ---------------------------------------------------------------
   if (is.null(variables)) {
     variables <- names(data)
-    # variables <- setdiff(variables, response)
     cli::cli_alert_info("Using all variables in data.")
   }
 
@@ -93,17 +92,14 @@ variable_importance <- function(object,
   # sampler -----------------------------------------------------------------
   sampler <- get_sampler(data, sample_size, sample_frac)
 
-
-
   # predict function --------------------------------------------------------
   if (is.null(predict_function)) {
-    cls <- class(object)
-    cls <- stringr::str_subset(cls, "formula", negate = TRUE)
-    cls <- cls[1]
+
+    cls <- get_class(object)
 
     predict_function <- utils::getS3method("predict", class = cls)
 
-    cli::cli_alert_info(stringr::str_glue("Using `predict.{cls}` as predict_function."))
+    cli::cli_alert_info(stringr::str_glue("Using `predict.{cls}` as predict function."))
 
   }
 
@@ -197,13 +193,35 @@ variable_importance <- function(object,
     )
 
   # output ------------------------------------------------------------------
-  attr(dout, "class_object") <- class(object)
+  attr(dout, "class_object") <- get_class(object)
 
   attr(dout, "metric") <- attr(metric, "text")
 
   class(dout) <- c("celavi_metric_permutations_raw", class(dout))
 
   dout
+
+}
+
+get_class <- function(object){
+
+  cls <- class(object)
+
+  if(length(cls) == 1) return(cls)
+
+  funs <- purrr::map(
+    cls,
+    purrr::safely(utils::getS3method),
+    f = "predict"
+  )
+
+  lgls <- funs |>
+    purrr::map(purrr::pluck, "error") |>
+    purrr::map_lgl(is.null)
+
+  cls <- cls[lgls]
+
+  cls
 
 }
 
