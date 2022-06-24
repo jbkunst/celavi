@@ -22,6 +22,12 @@ accuracy <- function(actual, predicted, na.rm = FALSE) {
   mean(actual == predicted, na.rm = FALSE)
 }
 
+one_minus_accuracy <- function(actual, predicted, na.rm = FALSE) {
+
+  1 - accuracy(actual, predicted)
+
+}
+
 rmse <- function(actual, predicted, na.rm = FALSE) {
   sqrt(mean((predicted - actual)^2, na.rm = na.rm))
 }

@@ -67,16 +67,14 @@ variable_importance <- function(object,
   # response <- "y"
   if(is.null(response)) {
 
-    cli::cli_alert_info("Trying extract response name using `formula`.")
-
-    response <- as.character(stats::formula(object)[[2L]])
-
-    cli::cli_alert_info(stringr::str_glue("Using `{ response }` as response."))
+    response <- get_response(object)
 
   }
   assertthat::assert_that(is.character(response))
   assertthat::assert_that(length(response) == 1)
-  assertthat::assert_that(is.vector(data[, response, drop = TRUE]))
+
+  # dont work for factors?
+  assertthat::assert_that(length(data[, response, drop = TRUE]) == nrow(data))
 
   # metric ------------------------------------------------------------------
   if (is.null(metric)) {
@@ -203,6 +201,32 @@ variable_importance <- function(object,
 
 }
 
+get_response <- function(object){
+
+  cli::cli_alert_info("Trying extract response name using `formula`.")
+
+  gr <- function(object) as.character(stats::formula(object)[[2L]])
+  gr <- purrr::safely(gr)
+
+  response <- gr(object)
+
+
+  if(is.null(response$result)) {
+
+    cli::cli_alert_danger(as.character(response$error))
+
+    return(NULL)
+
+  } else {
+
+    cli::cli_alert_info(stringr::str_glue("Using `{ response$result }` as response."))
+
+    return(response$result)
+
+  }
+
+}
+
 get_class <- function(object){
 
   cls <- class(object)
@@ -235,9 +259,9 @@ get_metric <- function(response_vector) {
 
   } else if(is.character(response_vector) | is.factor(response_vector)) {
 
-    metric <- accuracy
+    metric <- one_minus_accuracy
 
-    metric_txt <- "accuracy"
+    metric_txt <- "1 - accuracy"
 
   } else if(is.numeric(response_vector)){
 
