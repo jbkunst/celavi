@@ -91,8 +91,8 @@ x <- feature_selection(
   stat = median,
   iterations = 10,
   # sample_frac = .2,
-  predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
-  # predict_function = DALEX::yhat,
+  # predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
+  predict_function = DALEX::yhat,
   # parallel = TRUE,
   max.depth = 15
 )
