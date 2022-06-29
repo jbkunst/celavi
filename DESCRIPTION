@@ -1,7 +1,8 @@
 Package: celavi
 Title: Another permuted based feature importance implementation
 Description: A permuted based feature importance implementation inspired by vip 
-    and DALEX packages.
+    and DALEX packages. This package also implement a feature selection procedure
+    via iterative rounds of permuted based feature importance.
 Version: 0.0.0.9000
 Authors@R: person("Joshua", "Kunst", role = c("aut", "cre"), email = "jbkunst@gmail.com")
 License: MIT + file LICENSE
@@ -27,5 +28,8 @@ Imports:
 Suggests: 
     randomForest,
     ranger,
+    rmarkdown,
     spelling
+Remotes: 
+  github::jbkunst/klassets    
 Language: en-US

@@ -1,11 +1,12 @@
 #' Variable importance via variable permutations
 #'
-#' @param object The model.
-#' @param data A data to calculate the metrics.
+#' @param object The model object.
+#' @param data A data to calculate the loss_function.
 #' @param variables Variables to use.
 #' @param response Name of the variable response.
-#' @param metric The metric to evaluate. Must be a loss function, i.e., greater
-#'   value of the function better performance of the model.
+#' @param loss_function The loss function to evaluate,  Must be a function with 2
+#'   arguments: actual and predicted values. Loss function gives a smaller
+#'   value if the model have better performance of the model.
 #' @param iterations Number of iterations.
 #' @param sample_size Sample size.
 #' @param sample_frac Proportion to sample in each iteration.
@@ -13,8 +14,7 @@
 #'   which returns a vector (no data frame).
 #' @param parallel A logical value indicating if the process should be using `furrr::future_pmap_dbl`
 #'   or `purrr::pmap_dbl`.
-#' @param verbose A logical value to indicate if progress bars and other messages
-#'   will be showed.
+#' @param verbose A logical value indicating to show progress bars.
 #'
 #' @examples
 #'
@@ -35,7 +35,7 @@ variable_importance <- function(object,
                                 data = NULL,
                                 variables = NULL,
                                 response = NULL,
-                                metric = NULL,
+                                loss_function = NULL,
                                 iterations = 1,
                                 sample_size = NULL,
                                 sample_frac = NULL,
@@ -76,12 +76,12 @@ variable_importance <- function(object,
   # dont work for factors?
   assertthat::assert_that(length(data[, response, drop = TRUE]) == nrow(data))
 
-  # metric ------------------------------------------------------------------
-  if (is.null(metric)) {
-    metric <- get_metric(data[, response, drop = TRUE])
+  # loss_function ------------------------------------------------------------------
+  if (is.null(loss_function)) {
+    loss_function <- get_loss_function(data[, response, drop = TRUE])
   }
 
-  assertthat::assert_that(is.function(metric))
+  assertthat::assert_that(is.function(loss_function))
 
   # iterations --------------------------------------------------------------
   assertthat::assert_that(is.numeric(iterations))
@@ -102,7 +102,7 @@ variable_importance <- function(object,
   }
 
   # function ----------------------------------------------------------------
-  metric_after_permutation <- function(variable, iteration) {
+  loss_function_after_permutation <- function(variable, iteration) {
 
     if(is.na(variable)) variable <- character(0)
 
@@ -110,7 +110,7 @@ variable_importance <- function(object,
 
     daux[, variable] <- daux[sample(nrow(daux)), variable]
 
-    metric(daux[, response, drop = TRUE], predict_function(object, daux))
+    loss_function(daux[, response, drop = TRUE], predict_function(object, daux))
 
   }
 
@@ -126,16 +126,16 @@ variable_importance <- function(object,
 
     if (verbose) {
 
-      fun_metric_p <- function(variable, iteration, p) {
+      fun_loss_function_p <- function(variable, iteration, p) {
         p()
-        metric_after_permutation(variable, iteration)
+        loss_function_after_permutation(variable, iteration)
       }
 
       progressr::with_progress({
         p <- progressr::progressor(steps = nrow(dout))
         results <- furrr::future_pmap_dbl(
           dout,
-          fun_metric_p,
+          fun_loss_function_p,
           p = p,
           .options = furrr::furrr_options(seed = TRUE)
         )
@@ -151,7 +151,7 @@ variable_importance <- function(object,
     } else {
       results <- furrr::future_pmap_dbl(
         dout,
-        metric_after_permutation,
+        loss_function_after_permutation,
         .options = furrr::furrr_options(seed = TRUE)
         )
 
@@ -159,7 +159,7 @@ variable_importance <- function(object,
 
 
   } else {
-    fun_metric_np <- metric_after_permutation
+    fun_loss_function_np <- loss_function_after_permutation
 
     if (verbose) {
       pb <- progress::progress_bar$new(
@@ -167,14 +167,14 @@ variable_importance <- function(object,
         format = ":spin :current/:total [:bar] :percent in :elapsed ETA: :eta"
       )
 
-      fun_metric_np <- function(variable, iteration) {
+      fun_loss_function_np <- function(variable, iteration) {
         pb$tick(tokens = list(variable = variable, iteration = iteration))
-        metric_after_permutation(variable, iteration)
+        loss_function_after_permutation(variable, iteration)
       }
 
     }
 
-    results <- purrr::pmap_dbl(dout, fun_metric_np)
+    results <- purrr::pmap_dbl(dout, fun_loss_function_np)
 
   }
 
@@ -193,9 +193,9 @@ variable_importance <- function(object,
   # output ------------------------------------------------------------------
   attr(dout, "class_object") <- get_class(object)
 
-  attr(dout, "metric") <- attr(metric, "text")
+  attr(dout, "loss_function") <- attr(loss_function, "text")
 
-  class(dout) <- c("celavi_metric_permutations_raw", class(dout))
+  class(dout) <- c("celavi_loss_function_permutations_raw", class(dout))
 
   dout
 
@@ -249,33 +249,33 @@ get_class <- function(object){
 
 }
 
-get_metric <- function(response_vector) {
+get_loss_function <- function(response_vector) {
 
   if(length(unique(response_vector)) == 2) {
 
-    metric <- one_minus_auc
+    loss_function <- one_minus_auc
 
-    metric_txt <- "1 - AUCROC"
+    loss_function_txt <- "1 - AUCROC"
 
   } else if(is.character(response_vector) | is.factor(response_vector)) {
 
-    metric <- one_minus_accuracy
+    loss_function <- one_minus_accuracy
 
-    metric_txt <- "1 - accuracy"
+    loss_function_txt <- "1 - accuracy"
 
   } else if(is.numeric(response_vector)){
 
-    metric <- rmse
+    loss_function <- rmse
 
-    metric_txt <- "root mean square error"
+    loss_function_txt <- "root mean square error"
 
   }
 
-  cli::cli_alert_info(stringr::str_glue("Using { metric_txt } as metric."))
+  cli::cli_alert_info(stringr::str_glue("Using { loss_function_txt } as loss function."))
 
-  attr(metric, "text") <- metric_txt
+  attr(loss_function, "text") <- loss_function_txt
 
-  metric
+  loss_function
 
 }
 

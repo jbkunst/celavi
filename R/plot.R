@@ -99,3 +99,35 @@ plot.celavi_metric_permutations_raw <- function(x, ...){
   gg
 
 }
+
+#' @export
+plot.celavi_feature_selection <- function(x, loss_function_transform = ~ .x, ...){
+
+  # x <- dout
+
+  x2 <- x |>
+    dplyr::select(
+      .data$round,
+      loss_function = .data$mean_value,
+      variables = .data$n_variables) |>
+    tidyr::pivot_longer(cols = c(2:3))
+
+  x3 <- x |>
+    dplyr::select(.data$round, value = .data$values) |>
+    tidyr::unnest(cols = 2) |>
+    dplyr::mutate(name = "loss_function")
+
+  ggplot2::ggplot(mapping = ggplot2::aes(.data$round, .data$value)) +
+
+    ggplot2::geom_line(data = dplyr::filter(x2, .data$name == "loss_function")) +
+
+    ggplot2::geom_boxplot(data = x3) +
+
+    ggplot2::geom_col(data = dplyr::filter(x2, .data$name == "variables")) +
+
+    ggplot2::ylim(0, NA) +
+
+    ggplot2::facet_wrap(ggplot2::vars(.data$name), scales = "free")
+
+
+}
