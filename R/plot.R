@@ -1,5 +1,5 @@
 #' @export
-plot.celavi_metric_permutations_raw <- function(x, ...){
+plot.celavi_loss_function_permutations_raw <- function(x, ...){
 
   extra_xs <- list(...)
 
