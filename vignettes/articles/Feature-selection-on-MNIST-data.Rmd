@@ -19,7 +19,7 @@ library(celavi)
 library(dplyr)
 library(klassets)
 
-use_small_data <- FALSE
+use_small_data <- TRUE
 
 data <- klassets::mnist_train
 data <- dplyr::mutate(data, label = factor(label))
