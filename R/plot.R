@@ -121,7 +121,9 @@ plot.celavi_feature_selection <- function(x, loss_function_transform = ~ .x, ...
 
     ggplot2::geom_line(data = dplyr::filter(x2, .data$name == "loss_function")) +
 
-    ggplot2::geom_boxplot(data = x3) +
+    ggplot2::geom_boxplot(
+      data = x3,
+      ggplot2::aes(group = .data$round)) +
 
     ggplot2::geom_col(data = dplyr::filter(x2, .data$name == "variables")) +
 
