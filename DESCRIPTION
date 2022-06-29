@@ -29,7 +29,8 @@ Suggests:
     randomForest,
     ranger,
     rmarkdown,
-    spelling
+    spelling,
+    klassets
 Remotes: 
   github::jbkunst/klassets    
 Language: en-US
