@@ -1,5 +1,7 @@
 ---
 title: "Feature selection on MNIST data"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -7,13 +9,13 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-```
-
-```{r setup}
-library(celavi)
+library(dplyr)
 ```
 
 ```{r data}
+set.seed(123)
+
+library(celavi)
 library(dplyr)
 library(klassets)
 
@@ -25,11 +27,18 @@ data <- dplyr::mutate(data, label = factor(label))
 test <- klassets::mnist_test
 test <- dplyr::mutate(test, label = factor(label))
 
+iter  <- 20
+frac <- .25
 
 if(use_small_data){
+  
   data <- dplyr::sample_n(data, 10000)
   data <- dplyr::select(data, c(1, sample(2:785, 100)))  
   test <- dplyr::sample_n(test, 1000)
+  
+  iter  <- 5
+  frac <- .20
+  
 }
 ```
 
@@ -41,8 +50,8 @@ x <- feature_selection(
   test = test,
   response = "label",
   stat = median,
-  iterations = 25,
-  sample_frac = .25,
+  iterations = iter,
+  sample_frac = frac,
   predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
   parallel = FALSE,
   max.depth = 10
