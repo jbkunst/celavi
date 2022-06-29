@@ -99,9 +99,9 @@
 
 <span class="kw">if</span><span class="op">(</span><span class="va">use_small_data</span><span class="op">)</span><span class="op">{</span>
   
-  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html" class="external-link">sample_n</a></span><span class="op">(</span><span class="va">data</span>, <span class="fl">30000</span><span class="op">)</span>
-  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">785</span>, <span class="fl">300</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>  
-  <span class="va">test</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html" class="external-link">sample_n</a></span><span class="op">(</span><span class="va">test</span>, <span class="fl">3000</span><span class="op">)</span>
+  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html" class="external-link">sample_n</a></span><span class="op">(</span><span class="va">data</span>, <span class="fl">40000</span><span class="op">)</span>
+  <span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">785</span>, <span class="fl">400</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>  
+  <span class="va">test</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/sample_n.html" class="external-link">sample_n</a></span><span class="op">(</span><span class="va">test</span>, <span class="fl">4000</span><span class="op">)</span>
   
   <span class="va">iter</span>  <span class="op">&lt;-</span> <span class="fl">5</span>
   <span class="va">frac</span> <span class="op">&lt;-</span> <span class="fl">.20</span>
@@ -121,37 +121,59 @@
   max.depth <span class="op">=</span> <span class="fl">15</span>
 <span class="op">)</span>
 <span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using 1 - accuracy as loss function.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Fitting 1st model using 300 predictor variables.</span>
-<span class="co">#&gt; Growing trees.. Progress: 60%. Estimated remaining time: 20 seconds.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Fitting 1st model using 400 predictor variables.</span>
+<span class="co">#&gt; Growing trees.. Progress: 38%. Estimated remaining time: 49 seconds.</span>
+<span class="co">#&gt; Growing trees.. Progress: 77%. Estimated remaining time: 18 seconds.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Round #1</span> ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 156 variables. Fitting new model with 144 variables.</span>
-<span class="co">#&gt; Growing trees.. Progress: 84%. Estimated remaining time: 5 seconds.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 139 variables. Fitting new model with 261 variables.</span>
+<span class="co">#&gt; Growing trees.. Progress: 47%. Estimated remaining time: 35 seconds.</span>
+<span class="co">#&gt; Growing trees.. Progress: 93%. Estimated remaining time: 4 seconds.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Round #2</span> ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 120 variables. Fitting new model with 24 variables.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 75 variables. Fitting new model with 186 variables.</span>
+<span class="co">#&gt; Growing trees.. Progress: 54%. Estimated remaining time: 26 seconds.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Round #3</span> ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
-<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 5 variables. Fitting new model with 19 variables.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 24 variables. Fitting new model with 162 variables.</span>
+<span class="co">#&gt; Growing trees.. Progress: 58%. Estimated remaining time: 22 seconds.</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; ── <span style="font-weight: bold;">Round #4</span> ──</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 151 variables. Fitting new model with 11 variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── <span style="font-weight: bold;">Round #5</span> ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 1 variables. Fitting new model with 10 variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── <span style="font-weight: bold;">Round #6</span> ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Removing 1 variables. Fitting new model with 9 variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── <span style="font-weight: bold;">Round #7</span> ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Using `dplyr::sample_frac` as sampler.</span>
 
 <span class="va">x</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 4 × 5</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 7 × 5</span></span>
 <span class="co">#&gt;   round mean_value values    n_variables variables  </span>
 <span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>     </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     0.045<span style="text-decoration: underline;">7</span> <span style="color: #949494;">&lt;dbl [5]&gt;</span>         300 <span style="color: #949494;">&lt;chr [300]&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     0.057<span style="text-decoration: underline;">7</span> <span style="color: #949494;">&lt;dbl [5]&gt;</span>         144 <span style="color: #949494;">&lt;chr [144]&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     0.152  <span style="color: #949494;">&lt;dbl [5]&gt;</span>          24 <span style="color: #949494;">&lt;chr [24]&gt;</span> </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     0.155  <span style="color: #949494;">&lt;dbl [5]&gt;</span>          19 <span style="color: #949494;">&lt;chr [19]&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>     1     0.037<span style="text-decoration: underline;">5</span> <span style="color: #949494;">&lt;dbl [5]&gt;</span>         400 <span style="color: #949494;">&lt;chr [400]&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span>     2     0.045<span style="text-decoration: underline;">0</span> <span style="color: #949494;">&lt;dbl [5]&gt;</span>         261 <span style="color: #949494;">&lt;chr [261]&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">3</span>     3     0.044  <span style="color: #949494;">&lt;dbl [5]&gt;</span>         186 <span style="color: #949494;">&lt;chr [186]&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">4</span>     4     0.058  <span style="color: #949494;">&lt;dbl [5]&gt;</span>         162 <span style="color: #949494;">&lt;chr [162]&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">5</span>     5     0.383  <span style="color: #949494;">&lt;dbl [5]&gt;</span>          11 <span style="color: #949494;">&lt;chr [11]&gt;</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">6</span>     6     0.386  <span style="color: #949494;">&lt;dbl [5]&gt;</span>          10 <span style="color: #949494;">&lt;chr [10]&gt;</span> </span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">7</span>     7     0.387  <span style="color: #949494;">&lt;dbl [5]&gt;</span>           9 <span style="color: #949494;">&lt;chr [9]&gt;</span></span>
 
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></code></pre></div>
 <p><img src="Feature-selection-on-MNIST-data_files/figure-html/procedure-1.png" width="700"></p>
