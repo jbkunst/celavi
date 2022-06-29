@@ -99,7 +99,7 @@ that I use <em>really</em> often <code>vip::vi_permute</code> and <code>DALEX::m
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"jbkunst/celavi"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="example-i-variable-importance">Example I: Variable Importance<a class="anchor" aria-label="anchor" href="#example-i-variable-importance"></a>
 </h2>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://jkunst.com/celavi/">celavi</a></span><span class="op">)</span>
@@ -112,7 +112,7 @@ that I use <em>really</em> often <code>vip::vi_permute</code> and <code>DALEX::m
 <span class="co">#&gt; ℹ Using all variables in data.</span>
 <span class="co">#&gt; ℹ Trying extract response name using `formula`.</span>
 <span class="co">#&gt; ℹ Using `mpg` as response.</span>
-<span class="co">#&gt; ℹ Using root mean square error as metric.</span>
+<span class="co">#&gt; ℹ Using root mean square error as loss function.</span>
 <span class="co">#&gt; ℹ Using `base::identity` as sampler.</span>
 <span class="co">#&gt; ℹ Using `predict.lm` as predict function.</span>
 
@@ -137,13 +137,91 @@ that I use <em>really</em> often <code>vip::vi_permute</code> and <code>DALEX::m
 <span class="co">#&gt; ℹ Using all variables in data.</span>
 <span class="co">#&gt; ℹ Trying extract response name using `formula`.</span>
 <span class="co">#&gt; ℹ Using `mpg` as response.</span>
-<span class="co">#&gt; ℹ Using root mean square error as metric.</span>
+<span class="co">#&gt; ℹ Using root mean square error as loss function.</span>
 <span class="co">#&gt; ℹ Using `base::identity` as sampler.</span>
 <span class="co">#&gt; ℹ Using `predict.randomForest` as predict function.</span>
 
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">vi</span>, <span class="va">vi_rf</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
 <p>From the previous chart we can tell the random Forest have small (better) RMSE and is less affected in terms of predictability by removing variables, wt variable for example.</p>
+</div>
+<div class="section level2">
+<h2 id="example-ii-feature-selection">Example II: Feature Selection<a class="anchor" aria-label="anchor" href="#example-ii-feature-selection"></a>
+</h2>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">credit_data</span>, package <span class="op">=</span> <span class="st">"modeldata"</span><span class="op">)</span>
+
+<span class="va">credit_data</span> <span class="op">&lt;-</span> <span class="va">credit_data</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/stats/complete.cases.html" class="external-link">complete.cases</a></span><span class="op">(</span><span class="va">credit_data</span><span class="op">)</span>,<span class="op">]</span>
+
+<span class="va">fs</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/feature_selection.html">feature_selection</a></span><span class="op">(</span>
+  <span class="co"># randomForest:::randomForest.formula,</span>
+  <span class="va">glm</span>,
+  <span class="va">credit_data</span>,
+  response <span class="op">=</span> <span class="st">"Status"</span>,
+  stat <span class="op">=</span> <span class="va">min</span>,
+  iterations <span class="op">=</span> <span class="fl">20</span>,
+  sample_frac <span class="op">=</span> <span class="fl">.5</span>, 
+  predict_function <span class="op">=</span> <span class="va">predict.glm</span>,
+  <span class="co"># function accepts specific argument for the fit function</span>
+  family  <span class="op">=</span> <span class="va">binomial</span>,
+  
+<span class="op">)</span>
+<span class="co">#&gt; ℹ Using 1 - AUCROC as loss function.</span>
+<span class="co">#&gt; ℹ Fitting 1st model using 13 predictor variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Round #1 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ℹ Using `dplyr::sample_frac` as sampler.</span>
+<span class="co">#&gt; ℹ Removing 6 variables. Fitting new model with 7 variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Round #2 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ℹ Using `dplyr::sample_frac` as sampler.</span>
+<span class="co">#&gt; ℹ Removing 1 variables. Fitting new model with 6 variables.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ── Round #3 ──</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; ℹ Using `dplyr::sample_frac` as sampler.</span>
+
+<span class="va">fs</span>
+<span class="co">#&gt; # A tibble: 3 × 5</span>
+<span class="co">#&gt;   round mean_value values     n_variables variables </span>
+<span class="co">#&gt;   &lt;dbl&gt;      &lt;dbl&gt; &lt;list&gt;           &lt;int&gt; &lt;list&gt;    </span>
+<span class="co">#&gt; 1     1      0.165 &lt;dbl [20]&gt;          13 &lt;chr [13]&gt;</span>
+<span class="co">#&gt; 2     2      0.175 &lt;dbl [20]&gt;           7 &lt;chr [7]&gt; </span>
+<span class="co">#&gt; 3     3      0.182 &lt;dbl [20]&gt;           6 &lt;chr [6]&gt;</span>
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fs</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-3-1.png" width="100%"></p>
+<p>We have a simpler model with 6 variables without loss significance predictive performance.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">plot</span>, <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">fs</span>, <span class="st">"variable_importance"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>
+    breaks <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pretty_breaks.html" class="external-link">pretty_breaks</a></span><span class="op">(</span><span class="fl">7</span><span class="op">)</span>,
+    sec.axis <span class="op">=</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/sec_axis.html" class="external-link">dup_axis</a></span><span class="op">(</span><span class="op">~</span> <span class="fl">1</span> <span class="op">-</span> <span class="va">.x</span>, name <span class="op">=</span> <span class="st">"AUC"</span>, labels <span class="op">=</span> <span class="fu">scales</span><span class="fu">::</span><span class="va"><a href="https://scales.r-lib.org/reference/percent_format.html" class="external-link">percent</a></span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="co">#&gt; Scale for 'y' is already present. Adding another scale for 'y', which will</span>
+<span class="co">#&gt; replace the existing scale.</span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-4-1.png" width="100%"></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">fs</span><span class="op">$</span><span class="va">variables</span>, <span class="fl">1</span><span class="op">)</span>
+<span class="co">#&gt; [[1]]</span>
+<span class="co">#&gt; [1] "Amount"    "Records"   "Seniority" "Price"     "Income"    "Job"</span>
+
+<span class="fu"><a href="https://rdrr.io/r/stats/step.html" class="external-link">step</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm</a></span><span class="op">(</span><span class="va">Status</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">credit_data</span>, family <span class="op">=</span> <span class="va">binomial</span><span class="op">)</span>, trace <span class="op">=</span> <span class="cn">FALSE</span>, k <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Call:  glm(formula = Status ~ Seniority + Records + Income + Amount + </span>
+<span class="co">#&gt;     Price, family = binomial, data = credit_data)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Coefficients:</span>
+<span class="co">#&gt; (Intercept)    Seniority   Recordsyes       Income       Amount        Price  </span>
+<span class="co">#&gt;    0.350841     0.101281    -1.743761     0.007080    -0.002194     0.001270  </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Degrees of Freedom: 4038 Total (i.e. Null);  4033 Residual</span>
+<span class="co">#&gt; Null Deviance:       4578 </span>
+<span class="co">#&gt; Residual Deviance: 3668  AIC: 3680</span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
