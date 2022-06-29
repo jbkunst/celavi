@@ -98,11 +98,10 @@ feature_selection <- function(fit_function = NULL,
       parallel = parallel
       )
 
-    plot(vi)
+    # plot(vi)
 
     vars <- variable_decision(vi, stat = stat)
-
-    vis       <- append(vis, list(vi))
+    vis  <- append(vis, list(vi))
 
     if(length(vars$rm) > 0){
 
