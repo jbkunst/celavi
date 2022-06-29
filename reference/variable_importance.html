@@ -21,6 +21,12 @@
       <ul class="navbar-nav me-auto"><li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/Feature-selection-on-MNIST-data.html">Feature selection on MNIST data</a>
+  </div>
+</li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
@@ -53,7 +59,7 @@
   data <span class="op">=</span> <span class="cn">NULL</span>,
   variables <span class="op">=</span> <span class="cn">NULL</span>,
   response <span class="op">=</span> <span class="cn">NULL</span>,
-  metric <span class="op">=</span> <span class="cn">NULL</span>,
+  loss_function <span class="op">=</span> <span class="cn">NULL</span>,
   iterations <span class="op">=</span> <span class="fl">1</span>,
   sample_size <span class="op">=</span> <span class="cn">NULL</span>,
   sample_frac <span class="op">=</span> <span class="cn">NULL</span>,
@@ -66,11 +72,11 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>object</dt>
-<dd><p>The model.</p></dd>
+<dd><p>The model object.</p></dd>
 
 
 <dt>data</dt>
-<dd><p>A data to calculate the metrics.</p></dd>
+<dd><p>A data to calculate the loss_function.</p></dd>
 
 
 <dt>variables</dt>
@@ -81,9 +87,10 @@
 <dd><p>Name of the variable response.</p></dd>
 
 
-<dt>metric</dt>
-<dd><p>The metric to evaluate. Must be a loss function, i.e., greater
-value of the function better performance of the model.</p></dd>
+<dt>loss_function</dt>
+<dd><p>The loss function to evaluate,  Must be a function with 2
+arguments: actual and predicted values. Loss function gives a smaller
+value if the model have better performance of the model.</p></dd>
 
 
 <dt>iterations</dt>
@@ -109,8 +116,7 @@ or <code><a href="https://purrr.tidyverse.org/reference/map2.html" class="extern
 
 
 <dt>verbose</dt>
-<dd><p>A logical value to indicate if progress bars and other messages
-will be showed.</p></dd>
+<dd><p>A logical value indicating to show progress bars.</p></dd>
 
 </dl></div>
 
@@ -125,7 +131,7 @@ will be showed.</p></dd>
 <span class="r-in">  data <span class="op">=</span> <span class="va">mtcars</span></span>
 <span class="r-in"><span class="op">)</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using all variables in data.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using root mean square error as metric.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using root mean square error as loss function.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using `base::identity` as sampler.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Using `predict.lm` as predict function.</span>
 <span class="r-in"></span>

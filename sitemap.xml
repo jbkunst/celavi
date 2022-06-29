@@ -13,10 +13,19 @@
     <loc>https://jkunst.com/celavi/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://jkunst.com/celavi/articles/Feature-selection-on-MNIST-data.html</loc>
+  </url>
+  <url>
+    <loc>https://jkunst.com/celavi/articles/index.html</loc>
+  </url>
+  <url>
     <loc>https://jkunst.com/celavi/authors.html</loc>
   </url>
   <url>
     <loc>https://jkunst.com/celavi/index.html</loc>
+  </url>
+  <url>
+    <loc>https://jkunst.com/celavi/reference/feature_selection.html</loc>
   </url>
   <url>
     <loc>https://jkunst.com/celavi/reference/index.html</loc>
