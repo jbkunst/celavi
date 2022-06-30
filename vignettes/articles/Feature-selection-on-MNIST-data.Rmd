@@ -37,7 +37,7 @@ if(use_small_data){
   test <- dplyr::sample_n(test, 4000)
   
   iter <- 20
-  frac <- 1/20
+  frac <- 1/10
   
 } 
 ```
@@ -50,7 +50,7 @@ x <- feature_selection(
   test = test,
   response = "label",
   # stat = function(x) quantile(x, .25),
-  # stat = function(x) quantile(x, .75),
+  stat = function(x) quantile(x, .75),
   iterations = iter,
   sample_frac = frac,
   predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
