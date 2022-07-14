@@ -32,9 +32,9 @@ frac <- .25
 
 if(use_small_data){
   
-  data <- dplyr::sample_n(data, 50000)
+  data <- dplyr::sample_n(data, 10000)
   data <- dplyr::select(data, c(1, sample(2:785, 500)))  
-  test <- dplyr::sample_n(test, 4000)
+  test <- dplyr::sample_n(test, 1000)
   
   iter <- 20
   frac <- 1/10
