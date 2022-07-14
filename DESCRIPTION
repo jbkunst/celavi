@@ -30,7 +30,8 @@ Suggests:
     ranger,
     rmarkdown,
     spelling,
-    klassets
+    klassets,
+    glmnet
 Remotes: 
   github::jbkunst/klassets    
 Language: en-US

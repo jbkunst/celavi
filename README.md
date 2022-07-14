@@ -108,52 +108,130 @@ set.seed(123)
 data(credit_data, package = "modeldata")
 
 credit_data <- credit_data[complete.cases(credit_data),]
+credit_data$Status <- as.numeric(credit_data$Status) - 1
+
+# convert factor to dummies (to compare results with glmnet)
+credit_data <- as.data.frame(model.matrix(~ . - 1, data = credit_data))
+
+trn_tst <- sample(
+  c(TRUE, FALSE),
+  size = nrow(credit_data),
+  replace = TRUE, 
+  prob = c(.7, .3)
+  )
+
+credit_data_trn <- credit_data[ trn_tst,]
+credit_data_tst <- credit_data[!trn_tst,]
 
 fs <- feature_selection(
-  # randomForest:::randomForest.formula,
   glm,
-  credit_data,
+  credit_data_trn,
   response = "Status",
   stat = min,
-  iterations = 20,
-  sample_frac = .5, 
+  iterations = 10,
+  sample_frac = 1, 
   predict_function = predict.glm,
   # function accepts specific argument for the fit function
-  family  = binomial,
-  
+  family  = binomial
 )
 #> ℹ Using 1 - AUCROC as loss function.
-#> ℹ Fitting 1st model using 13 predictor variables.
+#> ℹ Fitting 1st model using 23 predictor variables.
 #> 
 #> ── Round #1 ──
 #> 
 #> ℹ Using `dplyr::sample_frac` as sampler.
-#> ℹ Removing 6 variables. Fitting new model with 7 variables.
+#> ℹ Removing 5 variables. Fitting new model with 18 variables.
 #> 
 #> ── Round #2 ──
 #> 
 #> ℹ Using `dplyr::sample_frac` as sampler.
-#> ℹ Removing 1 variables. Fitting new model with 6 variables.
+#> ℹ Removing 2 variables. Fitting new model with 16 variables.
 #> 
 #> ── Round #3 ──
 #> 
 #> ℹ Using `dplyr::sample_frac` as sampler.
+#> ℹ Removing 1 variables. Fitting new model with 15 variables.
+#> 
+#> ── Round #4 ──
+#> 
+#> ℹ Using `dplyr::sample_frac` as sampler.
+#> ℹ Removing 1 variables. Fitting new model with 14 variables.
+#> 
+#> ── Round #5 ──
+#> 
+#> ℹ Using `dplyr::sample_frac` as sampler.
 
 fs
-#> # A tibble: 3 × 5
+#> # A tibble: 5 × 5
 #>   round mean_value values     n_variables variables 
 #>   <dbl>      <dbl> <list>           <int> <list>    
-#> 1     1      0.165 <dbl [20]>          13 <chr [13]>
-#> 2     2      0.175 <dbl [20]>           7 <chr [7]> 
-#> 3     3      0.182 <dbl [20]>           6 <chr [6]>
+#> 1     1      0.163 <dbl [10]>          23 <chr [23]>
+#> 2     2      0.163 <dbl [10]>          18 <chr [18]>
+#> 3     3      0.164 <dbl [10]>          16 <chr [16]>
+#> 4     4      0.165 <dbl [10]>          15 <chr [15]>
+#> 5     5      0.166 <dbl [10]>          14 <chr [14]>
 
 plot(fs)
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-We have a simpler model with 6 variables without loss significance
-predictive performance.
+We have a simpler model without loss significance predictive
+performance.
+
+Nopw we can compare with some other feature selection techniques.
+
+``` r
+mod_fs <- attr(fs, "final_fit")
+
+mod_full <- glm(Status ~ ., data = credit_data_trn, family = binomial)
+
+mod_step <- step(mod_full, trace = FALSE) 
+
+# wrapper around glmnet::cv.glmnet()
+mod_lasso <- risk3r::featsel_glmnet(mod_full, plot = FALSE)
+```
+
+``` r
+models <- list(
+  "fs by vip" = mod_fs,
+  "stepwise"  = mod_step,
+  "lasso"     = mod_lasso
+)
+
+purrr::map_df(
+  models,
+  risk3r::model_metrics,
+  newdata = credit_data_tst, 
+  .id = "method"
+)
+#> # A tibble: 3 × 5
+#>   method       ks   auc    iv  gini
+#>   <chr>     <dbl> <dbl> <dbl> <dbl>
+#> 1 fs by vip 0.530 0.839  1.89 0.679
+#> 2 stepwise  0.536 0.842  1.91 0.685
+#> 3 lasso     0.527 0.839  1.91 0.679
+```
+
+Not the best model in terms of metrics. But if we see the number of
+coefficients:
+
+``` r
+purrr::map_df(
+  models,
+  ~ tibble::tibble(`# variables` =  length(coef(.x))),
+  .id = "method"
+)
+#> # A tibble: 3 × 2
+#>   method    `# variables`
+#>   <chr>             <int>
+#> 1 fs by vip            15
+#> 2 stepwise             18
+#> 3 lasso                18
+```
+
+We can check the loss in each iteration, so you can choose what
+combintations of loss/number of variables you want.
 
 ``` r
 do.call(plot, attr(fs, "variable_importance")) +
@@ -165,23 +243,16 @@ do.call(plot, attr(fs, "variable_importance")) +
 #> replace the existing scale.
 ```
 
-<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
 
 ``` r
-tail(fs$variables, 1)
-#> [[1]]
-#> [1] "Amount"    "Records"   "Seniority" "Price"     "Income"    "Job"
-
-step(glm(Status ~ ., data = credit_data, family = binomial), trace = FALSE, k = 100)
-#> 
-#> Call:  glm(formula = Status ~ Seniority + Records + Income + Amount + 
-#>     Price, family = binomial, data = credit_data)
-#> 
-#> Coefficients:
-#> (Intercept)    Seniority   Recordsyes       Income       Amount        Price  
-#>    0.350841     0.101281    -1.743761     0.007080    -0.002194     0.001270  
-#> 
-#> Degrees of Freedom: 4038 Total (i.e. Null);  4033 Residual
-#> Null Deviance:       4578 
-#> Residual Deviance: 3668  AIC: 3680
+fs
+#> # A tibble: 5 × 5
+#>   round mean_value values     n_variables variables 
+#>   <dbl>      <dbl> <list>           <int> <list>    
+#> 1     1      0.163 <dbl [10]>          23 <chr [23]>
+#> 2     2      0.163 <dbl [10]>          18 <chr [18]>
+#> 3     3      0.164 <dbl [10]>          16 <chr [16]>
+#> 4     4      0.165 <dbl [10]>          15 <chr [15]>
+#> 5     5      0.166 <dbl [10]>          14 <chr [14]>
 ```

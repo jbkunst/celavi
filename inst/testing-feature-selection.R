@@ -62,9 +62,7 @@ x <- feature_selection(
   data = data,
   test = test,
   response = "y",
-  # stat = function(x) quantile(x, 0.5),
   iterations = 10
-  # size = 7, decay = 0.1, linout = TRUE
 )
 
 x
@@ -78,12 +76,14 @@ x <- feature_selection(
   data = data,
   test = test,
   response = "y",
-  # stat = function(x) quantile(x, 0.5),
+  stat = function(x) quantile(x, 0.5),
   iterations = 10,
   ntree = 10, do.trace = TRUE
 )
 
 x
+
+plot(x)
 
 do.call(plot, attr(x, "variable_importance"))
 
@@ -126,6 +126,65 @@ x |>
 
 do.call(plot, attr(x, "variable_importance")) +
   ggplot2::scale_y_reverse()
+
+# MNIST -------------------------------------------------------------------
+data <- klassets::mnist_train
+data <- dplyr::mutate(data, label = factor(label))
+data <- dplyr::sample_n(data, 20000)
+# data <- dplyr::select(data, c(1, sample(2:785, 300)))
+
+test <- klassets::mnist_test
+test <- dplyr::mutate(test, label = factor(label))
+test <- dplyr::sample_n(test, 2000)
+
+
+
+# ranger ------------------------------------------------------------------
+x <- feature_selection(
+  ranger::ranger,
+  data = data,
+  test = test,
+  response = "label",
+  stat = median,
+  # stat = function(x) quantile(x, .25),
+  iterations = 25,
+  sample_frac = .25,
+  # predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
+  predict_function = DALEX::yhat,
+  # parallel = TRUE,
+  max.depth = 10
+)
+
+plot(x)
+
+plot(x) +
+  ggplot2::scale_y_reverse()
+
+x |>
+  dplyr::mutate(auc = 1 - value)
+
+do.call(plot, attr(x, "variable_importance")) +
+  ggplot2::scale_y_reverse()
+
+
+
+# randomForest ------------------------------------------------------------
+x <- feature_selection(
+  function(formula, data, ...) randomForest::randomForest(formula, data = data, ...),
+  data = data,
+  test = test,
+  response = "label",
+  stat = median,
+  # stat = function(x) quantile(x, .25),
+  iterations = 25,
+  sample_frac = .25,
+  # predict_function = function(object, newdata){ranger:::predict.ranger(object, data = newdata)$predictions},
+  # predict_function = DALEX::yhat,
+
+  parallel = TRUE,
+
+  ntree = 50, do.trace = TRUE
+)
 
 
 #

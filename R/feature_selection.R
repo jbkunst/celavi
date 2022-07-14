@@ -162,6 +162,8 @@ feature_selection <- function(fit_function = NULL,
       variables = vars_keep
     )
 
+  attr(dout, "final_fit") <- object_iter
+
   attr(dout, "variable_importance") <- vis
 
   class(dout) <- c("celavi_feature_selection", class(dout))

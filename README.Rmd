@@ -11,7 +11,8 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "100%",
+  warning = FALSE
 )
 ```
 
@@ -94,19 +95,31 @@ set.seed(123)
 data(credit_data, package = "modeldata")
 
 credit_data <- credit_data[complete.cases(credit_data),]
+credit_data$Status <- as.numeric(credit_data$Status) - 1
+
+# convert factor to dummies (to compare results with glmnet)
+credit_data <- as.data.frame(model.matrix(~ . - 1, data = credit_data))
+
+trn_tst <- sample(
+  c(TRUE, FALSE),
+  size = nrow(credit_data),
+  replace = TRUE, 
+  prob = c(.7, .3)
+  )
+
+credit_data_trn <- credit_data[ trn_tst,]
+credit_data_tst <- credit_data[!trn_tst,]
 
 fs <- feature_selection(
-  # randomForest:::randomForest.formula,
   glm,
-  credit_data,
+  credit_data_trn,
   response = "Status",
   stat = min,
-  iterations = 20,
-  sample_frac = .5, 
+  iterations = 10,
+  sample_frac = 1, 
   predict_function = predict.glm,
   # function accepts specific argument for the fit function
-  family  = binomial,
-  
+  family  = binomial
 )
 
 fs
@@ -114,7 +127,48 @@ fs
 plot(fs)
 ```
 
-We have a simpler model with 6 variables without loss significance predictive performance.
+We have a simpler model without loss significance predictive performance.
+
+Nopw we can compare with some other feature selection techniques.
+
+```{r, results='hide'}
+mod_fs <- attr(fs, "final_fit")
+
+mod_full <- glm(Status ~ ., data = credit_data_trn, family = binomial)
+
+mod_step <- step(mod_full, trace = FALSE) 
+
+# wrapper around glmnet::cv.glmnet()
+mod_lasso <- risk3r::featsel_glmnet(mod_full, plot = FALSE)
+```
+
+```{r}
+models <- list(
+  "fs by vip" = mod_fs,
+  "stepwise"  = mod_step,
+  "lasso"     = mod_lasso
+)
+
+purrr::map_df(
+  models,
+  risk3r::model_metrics,
+  newdata = credit_data_tst, 
+  .id = "method"
+)
+```
+
+Not the best model in terms of metrics. But if we see the number of coefficients:
+
+```{r}
+purrr::map_df(
+  models,
+  ~ tibble::tibble(`# variables` =  length(coef(.x))),
+  .id = "method"
+)
+```
+
+We can check the loss in each iteration, so you can choose what combintations
+of loss/number of variables you want.
 
 ```{r}
 do.call(plot, attr(fs, "variable_importance")) +
@@ -123,11 +177,8 @@ do.call(plot, attr(fs, "variable_importance")) +
     sec.axis = ggplot2::dup_axis(~ 1 - .x, name = "AUC", labels = scales::percent)
   )
 
-tail(fs$variables, 1)
-
-step(glm(Status ~ ., data = credit_data, family = binomial), trace = FALSE, k = 100)
+fs
 ```
-
 
 
 
