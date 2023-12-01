@@ -49,7 +49,7 @@ Please, visit the links and used that awesome tools!
 
 You can install the development version of celavi from [GitHub](https://github.com/) with:
 
-``` r
+```r
 # install.packages("devtools")
 devtools::install_github("jbkunst/celavi")
 ```
@@ -63,12 +63,12 @@ lm_model <- lm(mpg ~ ., data = mtcars)
 
 set.seed(123)
 
-vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 10)
+vi <- celavi::variable_importance(lm_model, data = mtcars, iterations = 100)
 
 dplyr::glimpse(vi)
 
 nrow(vi)
-# nrow(vi) = (ncol(mtcars) - 1 + 2) * iterations
+# nrow(vi) == (ncol(mtcars) - 1 + 2) * iterations
 
 plot(vi)
 ```
@@ -78,7 +78,7 @@ And compare with other model.
 ```{r}
 rf <- randomForest::randomForest(mpg ~ ., data = mtcars)
 
-vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 10)
+vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 100)
 
 plot(vi, vi_rf)
 ```
@@ -144,27 +144,31 @@ mod_lasso <- risk3r::featsel_glmnet(mod_full, plot = FALSE)
 
 ```{r}
 models <- list(
-  "fs by vip" = mod_fs,
+  "featsel by vip" = mod_fs,
   "stepwise"  = mod_step,
   "lasso"     = mod_lasso
 )
 
-purrr::map_df(
+dmetrics <- purrr::map_df(
   models,
   risk3r::model_metrics,
   newdata = credit_data_tst, 
   .id = "method"
 )
+
+dmetrics
 ```
 
 Not the best model in terms of metrics. But if we see the number of coefficients:
 
 ```{r}
-purrr::map_df(
+dnvars <- purrr::map_df(
   models,
   ~ tibble::tibble(`# variables` =  length(coef(.x))),
   .id = "method"
 )
+
+dplyr::full_join(dnvars, dmetrics, by = dplyr::join_by(method))
 ```
 
 We can check the loss in each iteration, so you can choose what combintations
