@@ -27,22 +27,28 @@ m_tre <- partykit::ctree(m2.price ~ ., data = data)
 predict(m_tre, head(data))
 
 vi_tre <- variable_importance(
-  m_tre, data = data,
+  m_tre,
+  data = data,
   iteration = 50,
   predict_function = function(o, d){ predict(o, d)  }
   )
 
 class(m_tre)
 
+plot(vi_tre)
+
 # random foresrt ----------------------------------------------------------
 m_rfr <- ranger::ranger(m2.price ~ ., data = data)
 
 vi_rfr <- variable_importance(
-  m_rfr, data = data, response = "m2.price",
+  m_rfr,
+  data = data,
+  response = "m2.price",
   iteration = 50,
   predict_function = function(object, newdata){ ranger:::predict.ranger(object, data = newdata)$predictions }
   )
 
+plot(vi_rfr)
 
 # plot --------------------------------------------------------------------
 plot(vi_lm, vi_rfr, vi_tre)
