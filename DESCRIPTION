@@ -7,6 +7,8 @@ Version: 0.0.0.9000
 Authors@R: person("Joshua", "Kunst", role = c("aut", "cre"), email = "jbkunst@gmail.com")
 License: MIT + file LICENSE
 Encoding: UTF-8
+Depends:
+    R (>= 4.1.0)
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0
 URL: https://jkunst.com/celavi/, https://github.com/jbkunst/celavi
@@ -33,5 +35,5 @@ Suggests:
     klassets,
     glmnet
 Remotes: 
-  github::jbkunst/klassets    
+    github::jbkunst/klassets    
 Language: en-US
