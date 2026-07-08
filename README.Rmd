@@ -18,40 +18,41 @@ knitr::opts_chunk$set(
 
 # celavi
 
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
+`celavi` provides permutation-based variable importance and feature selection tools.
 
-The goal of celavi is to join the main features of two functions  
-that I use _really_ often `vip::vi_permute` and `DALEX::model_parts`. Both functions
-do the _same_ task of calculate _drop out loss via permutation_, 
-but they have different features and approach.
+The package is inspired by two functions I use often: `vip::vi_permute()` and
+`DALEX::model_parts()`. Both estimate variable importance by measuring the
+drop-out loss after permuting predictors, but they have different strengths.
 
-In the case of `vip::vi_permute` is more direct to use (imho), have an implementation for
-parallel processing, can be used with a `sample_frac` parameter. Otherwise, in the case of `DALEX::model_parts` I like the user can give custom `metric`s as a loss functions,
-the _base line_ and _full model_ references values, and the plots. 
+`vip::vi_permute()` is direct to use, supports parallel processing, and works
+well with sampling arguments such as `sample_frac`. `DALEX::model_parts()` makes
+it easy to use custom loss functions, compare against baseline and full-model
+reference values, and produce useful plots.
 
-To that features I added some features to my _personal_ taste.
+`celavi` keeps the parts I like from both approaches and adds a few conveniences:
 
-- Add progress bars to the sequential and parallel process using `progress::progress_bar` and `progressr::progress`
-- Give the possibility of to the user to access to the _raw_ data.
-- Verbose information using `cli::cli_alert_info`.
+- progress bars for sequential and parallel runs;
+- access to the raw permutation results;
+- informative messages through `cli`;
+- a lightweight iterative feature-selection workflow.
 
 ## References
 
-The `vip` package from [koalaverse](https://github.com/koalaverse), and the 
-`DALEX` package from [MI²](https://www.mi2.ai/). In particular these links are awesome: https://koalaverse.github.io/vip/articles/vip.html
-and https://ema.drwhy.ai/featureImportance.html#featureImportanceR.
+`celavi` is inspired by:
 
-Please, visit the links and used that awesome tools!
+- `vip`, from the koalaverse: https://koalaverse.github.io/vip/articles/vip.html
+- `DALEX`, from MI²: https://ema.drwhy.ai/featureImportance.html#featureImportanceR
+
+Both are excellent packages. `celavi` is not intended to replace them; it is a
+small package focused on my preferred workflow for permutation importance and
+feature selection.
 
 ## Installation
 
-You can install the development version of celavi from [GitHub](https://github.com/) with:
+You can install the package from GitHub with:
 
 ```r
-# install.packages("devtools")
-devtools::install_github("jbkunst/celavi")
+pak::pkg_install("jbkunst/celavi")
 ```
 
 ## Example I: Variable Importance
@@ -83,9 +84,9 @@ vi_rf <- celavi::variable_importance(rf, data = mtcars, iterations = 100)
 plot(vi, vi_rf)
 ```
 
-From the previous chart we can tell the random Forest have small (better) RMSE
-and is less affected in terms of predictability by removing variables, wt variable
-for example.
+The previous chart shows that the random forest has a smaller, better RMSE.
+It is also less affected by permuting some predictors. For example, permuting
+`wt` has a visible impact on the linear model.
 
 ## Example II: Feature Selection
 
@@ -127,9 +128,9 @@ fs
 plot(fs)
 ```
 
-We have a simpler model without loss significance predictive performance.
+The result is a simpler model with little apparent loss in predictive performance.
 
-Nopw we can compare with some other feature selection techniques.
+Now we can compare with some other feature selection techniques.
 
 ```{r, results='hide'}
 mod_fs <- attr(fs, "final_fit")
@@ -171,10 +172,10 @@ dnvars <- purrr::map_df(
 dplyr::full_join(dnvars, dmetrics, by = dplyr::join_by(method))
 ```
 
-We can check the loss in each iteration, so you can choose what combintations
+We can check the loss in each iteration, so you can choose what combinations
 of loss/number of variables you want.
 
-```{r}
+```{r, fig.height=14}
 do.call(plot, attr(fs, "variable_importance")) +
   ggplot2::scale_y_continuous(
     breaks = scales::pretty_breaks(7),
