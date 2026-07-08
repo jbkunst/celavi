@@ -5,9 +5,9 @@ devtools::load_all()
 
 set.seed(192)
 
-mod <- rand_forest(mtry = 10, trees = 2000) %>%
-  set_engine("randomForest") %>%
-  set_mode("regression") %>%
+mod <- rand_forest(mtry = 10, trees = 2000) |>
+  set_engine("randomForest") |>
+  set_mode("regression") |>
   fit(mpg ~ ., data = mtcars)
 
 predict(mod, head(mtcars))
@@ -24,4 +24,3 @@ vi <- variable_importance(mod, data = mtcars, response = "mpg", predict_function
 ggplot(vi) + geom_boxplot(aes(variable, value))
 
 sd(sample(mtcars$mpg))
-
