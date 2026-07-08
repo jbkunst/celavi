@@ -3,11 +3,6 @@
 
 # celavi
 
-<!-- badges: start -->
-
-[![R-CMD-check](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jbkunst/celavi/actions/workflows/R-CMD-check.yaml)
-<!-- badges: end -->
-
 The goal of celavi is to join the main features of two functions  
 that I use *really* often `vip::vi_permute` and `DALEX::model_parts`.
 Both functions do the *same* task of calculate *drop out loss via
