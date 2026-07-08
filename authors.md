@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/jbkunst/celavi/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/jbkunst/celavi/blob/v0.0.1/DESCRIPTION)
 
 Kunst J (2026). *celavi: Another permuted based feature importance
 implementation*. R package version 0.0.1, <https://jkunst.com/celavi/>.
